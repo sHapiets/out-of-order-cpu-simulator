@@ -27,14 +27,19 @@ class Dispatcher {
   }
 
   void dispatch() {
-    /// ROB IS FULL
-    if (reorderBuffer.isFull) {
-      debugPrint(" --> # SKIP: RoB is full!");
+    /// DECODE
+    final RISCVInstruction instr = RISCVDecoder.instructionFromWord(instrWord);
+
+    if (instr == RISCVInstruction.nop) {
+      debugPrint("  --> # END: INSTR. SET HAS TERMINATED!");
       return;
     }
 
-    /// DECODE
-    final RISCVInstruction instr = RISCVDecoder.instructionFromWord(instrWord);
+    /// ROB IS FULL
+    if (reorderBuffer.isFull) {
+      debugPrint("  --> # SKIP: RoB is full!");
+      return;
+    }
 
     final opRegisters = RISCVDecoder.instrRegSelMapFromWord(
       instrWord,

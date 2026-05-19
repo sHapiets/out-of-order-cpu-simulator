@@ -18,6 +18,8 @@ class ROBEntry {
   bool issued = false;
   bool completed = false;
 
+  void Function() commitFunction = () {};
+
   RISCVInstruction instructionType;
   int pr1;
   int pr2;
@@ -27,4 +29,12 @@ class ROBEntry {
   int lprd;
 
   static ROBEntry empty = ROBEntry(inUse: false);
+
+  void setCommitFunction(void Function() commFunc) {
+    commitFunction = commFunc;
+  }
+
+  void commit() {
+    commitFunction();
+  }
 }

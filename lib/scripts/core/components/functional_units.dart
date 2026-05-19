@@ -3,6 +3,7 @@ import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types
 import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/arithmetic_unit.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/bit_shifter_unit.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/functional_unit.dart';
+import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/memory_unit.dart';
 
 class FunctionalUnits {
   FunctionalUnits._();
@@ -12,6 +13,7 @@ class FunctionalUnits {
     FunctionalUnitType.arithmetic: ArithmeticUnit.singleton,
     FunctionalUnitType.bitOperator: BitOperatorUnit.singleton,
     FunctionalUnitType.bitShift: BitShifterUnit.singleton,
+    FunctionalUnitType.memory: MemoryUnit.singleton,
   };
 
   void run() {

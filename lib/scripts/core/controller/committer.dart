@@ -30,14 +30,8 @@ class Committer {
     debugPrint("  --> # COMMITTED: Entry no. $commitHead has committed!");
     step = 0;
 
-    final FunctionalUnitType fuType =
-        commitEntry.instructionType.functionalUnitType;
-    if (fuType == FunctionalUnitType.memory) {
-    } else {
-      architecturalRegisters.setPR(commitEntry.rd, commitEntry.prd);
-    }
+    commitEntry.commit();
 
-    physicalRegisters.freePR(commitEntry.lprd);
     reorderBuffer.freeEntry(commitHead);
     reorderBuffer.incCommitHead();
 

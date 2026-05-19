@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:out_of_order_cpu_coe197/scripts/core/components/architectural_registers.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/physical_registers.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/reorder_buffer.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/functional_unit.dart';
@@ -14,7 +15,7 @@ class BitShifterUnit extends FunctionalUnit {
     super.complete();
 
     final reorderBuffer = ReorderBuffer.singleton;
-    final physcialRegisters = PhysicalRegisters.singleton;
+    final physicalRegisters = PhysicalRegisters.singleton;
 
     final entry = reorderBuffer.buffer[robEntryNumber];
     final instr = entry.instructionType;
@@ -23,8 +24,8 @@ class BitShifterUnit extends FunctionalUnit {
 
     switch (instr) {
       case RISCVInstruction.sll:
-        Data a = physcialRegisters.readRegister(entry.pr1);
-        Data b = physcialRegisters.readRegister(entry.pr2);
+        Data a = physicalRegisters.readRegister(entry.pr1);
+        Data b = physicalRegisters.readRegister(entry.pr2);
 
         final aUnsigned = a.asUnsignedInt();
         final shamt = b.asUnsignedInt() & 0x1F;
@@ -35,8 +36,8 @@ class BitShifterUnit extends FunctionalUnit {
         break;
 
       case RISCVInstruction.srl:
-        Data a = physcialRegisters.readRegister(entry.pr1);
-        Data b = physcialRegisters.readRegister(entry.pr2);
+        Data a = physicalRegisters.readRegister(entry.pr1);
+        Data b = physicalRegisters.readRegister(entry.pr2);
 
         final aUnsigned = a.asUnsignedInt();
         final shamt = b.asUnsignedInt() & 0x1F;
@@ -47,8 +48,8 @@ class BitShifterUnit extends FunctionalUnit {
         break;
 
       case RISCVInstruction.sra:
-        Data a = physcialRegisters.readRegister(entry.pr1);
-        Data b = physcialRegisters.readRegister(entry.pr2);
+        Data a = physicalRegisters.readRegister(entry.pr1);
+        Data b = physicalRegisters.readRegister(entry.pr2);
 
         final aSigned = a.asSignedInt();
         final shamt = b.asUnsignedInt() & 0x1F;
@@ -59,7 +60,7 @@ class BitShifterUnit extends FunctionalUnit {
         break;
 
       case RISCVInstruction.slli:
-        Data a = physcialRegisters.readRegister(entry.pr1);
+        Data a = physicalRegisters.readRegister(entry.pr1);
         Data b = entry.imm!;
 
         final aUnsigned = a.asUnsignedInt();
@@ -71,7 +72,7 @@ class BitShifterUnit extends FunctionalUnit {
         break;
 
       case RISCVInstruction.srli:
-        Data a = physcialRegisters.readRegister(entry.pr1);
+        Data a = physicalRegisters.readRegister(entry.pr1);
         Data b = entry.imm!;
 
         final aUnsigned = a.asUnsignedInt();
@@ -83,7 +84,7 @@ class BitShifterUnit extends FunctionalUnit {
         break;
 
       case RISCVInstruction.srai:
-        Data a = physcialRegisters.readRegister(entry.pr1);
+        Data a = physicalRegisters.readRegister(entry.pr1);
         Data b = entry.imm!;
 
         final aSigned = a.asSignedInt();
@@ -97,8 +98,16 @@ class BitShifterUnit extends FunctionalUnit {
       default:
     }
 
-    physcialRegisters.setValid(entry.prd, true);
-    physcialRegisters.writeRegister(entry.prd, output);
+    physicalRegisters.setValid(entry.prd, true);
+    physicalRegisters.writeRegister(entry.prd, output);
+
+    entry.setCommitFunction(() {
+      final architecturalRegisters = ArchitecturalRegisters.singleton;
+
+      architecturalRegisters.setPR(entry.rd, entry.prd);
+      physicalRegisters.freePR(entry.lprd);
+    });
+
     debugPrint("      --->>> WRITE IN PR:");
     debugPrint(
       "            --->>>  P${entry.prd} = 0x${output.asUnsignedHexString(8)}",

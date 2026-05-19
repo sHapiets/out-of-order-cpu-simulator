@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:out_of_order_cpu_coe197/scripts/core/components/architectural_registers.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/physical_registers.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/reorder_buffer.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/functional_unit.dart';
@@ -14,7 +15,7 @@ class ArithmeticUnit extends FunctionalUnit {
     super.complete();
 
     final reorderBuffer = ReorderBuffer.singleton;
-    final physcialRegisters = PhysicalRegisters.singleton;
+    final physicalRegisters = PhysicalRegisters.singleton;
 
     final entry = reorderBuffer.buffer[robEntryNumber];
     final instr = entry.instructionType;
@@ -23,25 +24,33 @@ class ArithmeticUnit extends FunctionalUnit {
 
     switch (instr) {
       case RISCVInstruction.add:
-        Data a = physcialRegisters.readRegister(entry.pr1);
-        Data b = physcialRegisters.readRegister(entry.pr2);
+        Data a = physicalRegisters.readRegister(entry.pr1);
+        Data b = physicalRegisters.readRegister(entry.pr2);
         output = Data.signedAdd(a, b, DataType.word);
 
       case RISCVInstruction.sub:
-        Data a = physcialRegisters.readRegister(entry.pr1);
-        Data b = physcialRegisters.readRegister(entry.pr2);
+        Data a = physicalRegisters.readRegister(entry.pr1);
+        Data b = physicalRegisters.readRegister(entry.pr2);
         output = Data.signedSub(a, b, DataType.word);
 
       case RISCVInstruction.addi:
-        Data a = physcialRegisters.readRegister(entry.pr1);
+        Data a = physicalRegisters.readRegister(entry.pr1);
         Data b = entry.imm!;
         output = Data.signedAdd(a, b, DataType.word);
 
       default:
     }
 
-    physcialRegisters.setValid(entry.prd, true);
-    physcialRegisters.writeRegister(entry.prd, output);
+    physicalRegisters.setValid(entry.prd, true);
+    physicalRegisters.writeRegister(entry.prd, output);
+
+    entry.setCommitFunction(() {
+      final architecturalRegisters = ArchitecturalRegisters.singleton;
+
+      architecturalRegisters.setPR(entry.rd, entry.prd);
+      physicalRegisters.freePR(entry.lprd);
+    });
+
     debugPrint("      --->>> WRITE IN PR:");
     debugPrint(
       "            --->>>  P${entry.prd} = 0x${output.asUnsignedHexString(8)}",

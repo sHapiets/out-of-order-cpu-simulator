@@ -17,12 +17,11 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
   
   fonts:
     - family: Nunito
       fonts:
-        - asset: lib/layout/_fontstyles/Nunito-Regular.ttf
+        - asset: lib/scripts/layout/_fontstyles/Nunito-Regular.ttf
     - family: Roboto-Mono
       fonts:
-        - asset: lib/layout/_fontstyles/RobotoMono-Regular.ttf
+        - asset: lib/scripts/layout/_fontstyles/RobotoMono-Regular.ttf

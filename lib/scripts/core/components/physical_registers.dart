@@ -43,6 +43,10 @@ class PhysicalRegisters {
   }
 
   Data readRegister(int address) {
+    if (address == -1) {
+      return Data.wordZero();
+    }
+
     return _registers[address].data;
   }
 

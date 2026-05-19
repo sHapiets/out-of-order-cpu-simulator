@@ -12,9 +12,11 @@ class ArchitecturalRegisters {
         ..update(RegisterAddress.pc, (_) => 0)
         ..update(RegisterAddress.x0, (_) => 0);
 
-  Map<RegisterAddress, int> renameTable = {
-    for (final register in RegisterAddress.values) register: -1,
-  }..remove(RegisterAddress.none);
+  Map<RegisterAddress, int> renameTable =
+      {for (final register in RegisterAddress.values) register: -1}
+        ..remove(RegisterAddress.none)
+        ..remove(RegisterAddress.pc)
+        ..remove(RegisterAddress.x0);
 
   void renameRegister(RegisterAddress regAdd, int prAdd) {
     renameTable[regAdd] = prAdd;
@@ -26,12 +28,16 @@ class ArchitecturalRegisters {
     }
 
     if (renameTable[regAdd] == null) {
-      debugPrint("regAdd: ${regAdd.name} does not exist in the renameTable!");
       return -1;
     }
 
     if (renameTable[regAdd] == -1) {
       final newPRAddress = PhysicalRegisters.singleton.ownPR(true);
+
+      if (newPRAddress == -1) {
+        return -1;
+      }
+
       renameRegister(regAdd, newPRAddress);
       setPR(regAdd, newPRAddress);
       return newPRAddress;
@@ -72,6 +78,10 @@ class ArchitecturalRegisters {
       return -1;
     }
 
+    return _data[regAdd]!;
+  }
+
+  int debugGetData(RegisterAddress regAdd) {
     return _data[regAdd]!;
   }
 }
