@@ -44,7 +44,7 @@ class ArithmeticUnit extends FunctionalUnit {
     physcialRegisters.writeRegister(entry.prd, output);
     debugPrint("      --->>> WRITE IN PR:");
     debugPrint(
-      "            --->>>  P${entry.prd} = ${output.asUnsignedHexString(32)}",
+      "            --->>>  P${entry.prd} = 0x${output.asUnsignedHexString(8)}",
     );
   }
 }

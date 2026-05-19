@@ -1,3 +1,4 @@
+import 'package:out_of_order_cpu_coe197/scripts/foundation/data.dart';
 import 'package:out_of_order_cpu_coe197/scripts/foundation/riscv_instruction_group.dart';
 
 class Configuration {
@@ -22,4 +23,16 @@ class Configuration {
   void setLatency(RISCVInstructionGroup instrGroup, int newLatency) {
     latency[instrGroup] = newLatency;
   }
+
+  List<Data> instructions = [
+    Data.fromUnsignedHexString("00A08093", DataType.word),
+    Data.fromUnsignedHexString("00A08113", DataType.word),
+    Data.fromUnsignedHexString("00A17213", DataType.word),
+    Data.fromUnsignedHexString("00A0F193", DataType.word),
+    Data.wordZero(),
+    Data.wordZero(),
+    Data.wordZero(),
+    Data.wordZero(),
+    Data.wordZero(),
+  ];
 }

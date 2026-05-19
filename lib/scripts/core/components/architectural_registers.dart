@@ -6,9 +6,11 @@ class ArchitecturalRegisters {
   ArchitecturalRegisters._();
   static final singleton = ArchitecturalRegisters._();
 
-  Map<RegisterAddress, int> pR = {
-    for (final register in RegisterAddress.values) register: -1,
-  }..remove(RegisterAddress.none);
+  final Map<RegisterAddress, int> _data =
+      {for (final register in RegisterAddress.values) register: -1}
+        ..remove(RegisterAddress.none)
+        ..update(RegisterAddress.pc, (_) => 0)
+        ..update(RegisterAddress.x0, (_) => 0);
 
   Map<RegisterAddress, int> renameTable = {
     for (final register in RegisterAddress.values) register: -1,
@@ -38,16 +40,38 @@ class ArchitecturalRegisters {
     return renameTable[regAdd]!;
   }
 
+  void incPC() {
+    _data[RegisterAddress.pc] = _data[RegisterAddress.pc]! + 4;
+  }
+
+  void decPC() {
+    _data[RegisterAddress.pc] = _data[RegisterAddress.pc]! - 4;
+  }
+
+  int get pc => _data[RegisterAddress.pc]!;
+
   void setPR(RegisterAddress regAdd, int pRAdd) {
-    pR[regAdd] = pRAdd;
+    if (regAdd == RegisterAddress.none ||
+        regAdd == RegisterAddress.pc ||
+        regAdd == RegisterAddress.x0) {
+      debugPrint(
+        "----- INVALID regAdd: ${regAdd.name} cannot be written using .setPR",
+      );
+    }
+
+    _data[regAdd] = pRAdd;
   }
 
   int getPR(RegisterAddress regAdd) {
-    if (pR[regAdd] == null) {
-      debugPrint("regAdd: ${regAdd.name} does not exist in the data!");
+    if (regAdd == RegisterAddress.none ||
+        regAdd == RegisterAddress.pc ||
+        regAdd == RegisterAddress.x0) {
+      debugPrint(
+        "----- INVALID regAdd: ${regAdd.name} is not bounded by a PR!",
+      );
       return -1;
     }
 
-    return pR[regAdd]!;
+    return _data[regAdd]!;
   }
 }

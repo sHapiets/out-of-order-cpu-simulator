@@ -1,5 +1,6 @@
 import 'package:flutter/rendering.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/architectural_registers.dart';
+import 'package:out_of_order_cpu_coe197/scripts/core/components/memory.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/physical_registers.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/reorder_buffer.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/rob_entry.dart';
@@ -12,27 +13,17 @@ class Dispatcher {
   Dispatcher._();
   static final singleton = Dispatcher._();
 
-  int pc = 0;
   Data instrWord = Data.wordZero();
 
   final reorderBuffer = ReorderBuffer.singleton;
   final physicalRegisters = PhysicalRegisters.singleton;
   final architecturalRegisters = ArchitecturalRegisters.singleton;
-
-  List<Data> instructions = [
-    Data.fromUnsignedHexString("00A08093", DataType.word),
-    Data.fromUnsignedHexString("00A08113", DataType.word),
-    Data.fromUnsignedHexString("00A17213", DataType.word),
-    Data.fromUnsignedHexString("00A0F193", DataType.word),
-    Data.wordZero(),
-    Data.wordZero(),
-    Data.wordZero(),
-    Data.wordZero(),
-    Data.wordZero(),
-  ];
+  final memory = Memory.singleton;
 
   void fetch() {
-    instrWord = instructions[pc];
+    final pc = Data.word(architecturalRegisters.pc.toSigned(32));
+    debugPrint("  --> # FETCHING INSTR AT PC = ${pc.asUnsignedHexString(8)}!");
+    instrWord = memory.loadWord(pc);
   }
 
   void dispatch() {
@@ -86,8 +77,7 @@ class Dispatcher {
       ),
     );
 
-    pc += 1;
-
+    architecturalRegisters.incPC();
     debugPrint("  --> # DISPATCHED TO ROB - Entry No. $dispatchTail!");
   }
 
