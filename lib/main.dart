@@ -11,6 +11,10 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: "Out of Order Processor Simulator",
+      theme: ThemeData(
+        scaffoldBackgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      ),
       home: Scaffold(body: Center(child: MainPage())),
     );
   }

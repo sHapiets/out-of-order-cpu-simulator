@@ -3,6 +3,7 @@ import 'package:out_of_order_cpu_coe197/scripts/core/components/architectural_re
 import 'package:out_of_order_cpu_coe197/scripts/core/components/memory.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/physical_registers.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/reorder_buffer.dart';
+import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/branch_unit.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/rob_entry.dart';
 import 'package:out_of_order_cpu_coe197/scripts/foundation/data.dart';
 import 'package:out_of_order_cpu_coe197/scripts/foundation/reg_sel.dart';
@@ -27,6 +28,12 @@ class Dispatcher {
   }
 
   void dispatch() {
+    final branchUnit = BranchUnit.singleton;
+    if (branchUnit.undoDispatch) {
+      debugPrint("  --> # SKIP: Dispatch blocked due to RoB flushing!");
+      return;
+    }
+
     /// DECODE
     final RISCVInstruction instr = RISCVDecoder.instructionFromWord(instrWord);
 
@@ -53,16 +60,23 @@ class Dispatcher {
     final int pr2 = architecturalRegisters.getRename(op2);
 
     final RegisterAddress rd = opRegisters[RegSel.rd]!;
-    final int lprd = architecturalRegisters.getRename(rd);
-    final int prd = physicalRegisters.ownPR(false);
 
-    /// ALL PRs ARE TAKEN
-    if (prd == -1) {
-      debugPrint("  --> # SKIP: Physical Registers are all taken.");
-      return;
+    int lprd = -1;
+    int prd = -1;
+
+    /// GET FREE PR
+    if (rd != RegisterAddress.none) {
+      lprd = architecturalRegisters.getRename(rd);
+      prd = physicalRegisters.ownPR(false);
+
+      /// ALL PRs ARE TAKEN
+      if (prd == -1) {
+        debugPrint("  --> # SKIP: Physical Registers are all taken.");
+        return;
+      }
+
+      architecturalRegisters.renameRegister(rd, prd);
     }
-
-    architecturalRegisters.renameRegister(rd, prd);
 
     final imm = RISCVDecoder.instrImmSelMapFromWord(
       instrWord,

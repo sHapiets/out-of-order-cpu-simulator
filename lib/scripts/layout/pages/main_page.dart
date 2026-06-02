@@ -4,7 +4,8 @@ import 'package:out_of_order_cpu_coe197/scripts/layout/component/processor/proce
 
 class MainPage extends StatelessWidget {
   MainPage({super.key});
-  final runtime = Runtime();
+  final runtime = Runtime.singleton;
+  final processorWidget = ProcessorWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +13,7 @@ class MainPage extends StatelessWidget {
       padding: EdgeInsetsGeometry.all(10),
       child: Stack(
         children: [
-          Align(alignment: AlignmentGeometry.center, child: ProcessorWidget()),
+          Align(alignment: AlignmentGeometry.center, child: processorWidget),
           Align(
             alignment: AlignmentGeometry.bottomCenter,
             child: ElevatedButton(

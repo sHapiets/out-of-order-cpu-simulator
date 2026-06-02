@@ -7,19 +7,22 @@ import 'package:out_of_order_cpu_coe197/scripts/core/controller/committer.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/controller/dispatcher.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/controller/issuer.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/functional_units.dart';
+import 'package:out_of_order_cpu_coe197/scripts/core/controller/resolver.dart';
 import 'package:out_of_order_cpu_coe197/scripts/foundation/data.dart';
 import 'package:out_of_order_cpu_coe197/scripts/foundation/register_address.dart';
 
 class Runtime {
-  Runtime() {
+  Runtime._() {
     setPresetInstructions();
   }
+  static final singleton = Runtime._();
 
-  int cycleNumber = 0;
+  ValueNotifier<int> cycleNumber = ValueNotifier(0);
   final _dispatcher = Dispatcher.singleton;
   final _issuer = Issuer.singleton;
   final _functionUnits = FunctionalUnits.singleton;
   final _committer = Committer.singleton;
+  final _resolver = Resolver.singleton;
 
   void setPresetInstructions() {
     final config = Configuration.singleton;
@@ -40,6 +43,7 @@ class Runtime {
     _issuer.run();
     _functionUnits.run();
     _committer.run();
+    _resolver.run();
 
     final archReg = ArchitecturalRegisters.singleton;
     final physReg = PhysicalRegisters.singleton;
@@ -73,7 +77,7 @@ class Runtime {
       );
     }
 
-    cycleNumber++;
+    cycleNumber.value = cycleNumber.value + 1;
 
     debugPrint("------------------------------");
     debugPrint(" ");

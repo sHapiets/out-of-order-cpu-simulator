@@ -23,6 +23,10 @@ class ReorderBuffer {
     dispatchTail = (dispatchTail + steps) % size;
   }
 
+  void decDispatchTail() {
+    dispatchTail = (dispatchTail % size - 1) % size;
+  }
+
   void incCommitHead({int steps = 1}) {
     commitHead = (commitHead + steps) % size;
   }

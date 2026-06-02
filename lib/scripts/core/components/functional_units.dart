@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/bit_operator_unit.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/arithmetic_unit.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/bit_shifter_unit.dart';
+import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/branch_unit.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/functional_unit.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/memory_unit.dart';
+import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/slt_unit.dart';
 
 class FunctionalUnits {
   FunctionalUnits._();
@@ -13,7 +15,9 @@ class FunctionalUnits {
     FunctionalUnitType.arithmetic: ArithmeticUnit.singleton,
     FunctionalUnitType.bitOperator: BitOperatorUnit.singleton,
     FunctionalUnitType.bitShift: BitShifterUnit.singleton,
+    FunctionalUnitType.slt: SLTUnit.singleton,
     FunctionalUnitType.memory: MemoryUnit.singleton,
+    FunctionalUnitType.branch: BranchUnit.singleton,
   };
 
   void run() {
@@ -29,7 +33,7 @@ class FunctionalUnits {
       }
 
       if (fUnit.isComplete) {
-        debugPrint("   # COMPLETED -- '${fUnit.isBusy}'");
+        debugPrint("   # COMPLETED -- '${fUnit.isComplete}'");
         fUnit.complete();
       }
     }

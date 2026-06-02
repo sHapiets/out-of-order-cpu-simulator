@@ -46,6 +46,11 @@ class ComponentPaint {
           ..lineTo(size.width * 0.85, size.height)
           ..lineTo(size.width * 0.15, size.height)
           ..close();
+      case ComponentShape.reorderBuffer:
+        final rect = Rect.fromLTWH(0, 0, size.width, size.height);
+
+        return Path()
+          ..addRRect(RRect.fromRectAndRadius(rect, const Radius.circular(16)));
       default:
         return Path()
           ..moveTo(0, 0)

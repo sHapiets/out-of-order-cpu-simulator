@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/architectural_registers.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/physical_registers.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/reorder_buffer.dart';
-import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/functional_unit.dart';
 
 class Committer {
   Committer._();

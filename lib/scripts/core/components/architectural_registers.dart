@@ -46,6 +46,14 @@ class ArchitecturalRegisters {
     return renameTable[regAdd]!;
   }
 
+  void setPC(int newPC) {
+    _data[RegisterAddress.pc] = newPC;
+  }
+
+  void offsetPC(int offset) {
+    _data[RegisterAddress.pc] = _data[RegisterAddress.pc]! + offset;
+  }
+
   void incPC() {
     _data[RegisterAddress.pc] = _data[RegisterAddress.pc]! + 4;
   }

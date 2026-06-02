@@ -5,4 +5,5 @@ enum ComponentShape {
   physicalRegisterFile,
   multiplexer,
   renameTable,
+  reorderBuffer,
 }
