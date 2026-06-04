@@ -10,19 +10,10 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsGeometry.all(10),
+      padding: EdgeInsetsGeometry.fromLTRB(40, 80, 40, 0),
       child: Stack(
         children: [
           Align(alignment: AlignmentGeometry.center, child: processorWidget),
-          Align(
-            alignment: AlignmentGeometry.bottomCenter,
-            child: ElevatedButton(
-              onPressed: () {
-                runtime.runCycle();
-              },
-              child: const Text('RUN'),
-            ),
-          ),
         ],
       ),
     );

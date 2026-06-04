@@ -16,7 +16,7 @@ class _MemoryWidgetState extends State<MemoryWidget> {
   final double widgetHeight = 320.0;
   final double widgetWidth = 240.0;
 
-  final Size paintSize = Size(200, 290);
+  final Size paintSize = Size(200, 240);
 
   late ListView memoryTable;
   late List<Row> instrMemoryTableRows = [];
@@ -213,6 +213,8 @@ class _MemoryWidgetState extends State<MemoryWidget> {
                 size: paintSize,
                 painter: ComponentPainter(
                   componentShape: ComponentShape.memory,
+                  borderColor: Theme.of(context).colorScheme.primary,
+                  fillColor: Theme.of(context).colorScheme.surface,
                 ),
               ),
             ),
@@ -220,7 +222,7 @@ class _MemoryWidgetState extends State<MemoryWidget> {
             Align(
               alignment: AlignmentGeometry.topLeft,
               child: Transform.translate(
-                offset: Offset(35, 20),
+                offset: Offset(35, 42),
                 child: Row(
                   children: [
                     Icon(Icons.memory_rounded),
@@ -236,7 +238,7 @@ class _MemoryWidgetState extends State<MemoryWidget> {
             Align(
               alignment: AlignmentGeometry.topCenter,
               child: Transform.translate(
-                offset: Offset(0, 40),
+                offset: Offset(0, 65),
                 child: SizedBox(
                   width: paintSize.width,
                   child: Divider(
@@ -248,25 +250,25 @@ class _MemoryWidgetState extends State<MemoryWidget> {
             ),
 
             Align(
+              alignment: AlignmentGeometry.topCenter,
+              child: Transform.translate(
+                offset: Offset(0, 90),
+                child: SizedBox(height: 120, width: 160, child: memoryTable),
+              ),
+            ),
+
+            Align(
               alignment: AlignmentGeometry.bottomCenter,
               child: Transform.translate(
-                offset: Offset(0, -50),
+                offset: Offset(0, -80),
                 child: memoryOnDisplayLabel,
               ),
             ),
 
             Align(
-              alignment: AlignmentGeometry.topCenter,
-              child: Transform.translate(
-                offset: Offset(0, 60),
-                child: SizedBox(height: 180, width: 160, child: memoryTable),
-              ),
-            ),
-
-            Align(
               alignment: AlignmentGeometry.bottomCenter,
               child: Transform.translate(
-                offset: Offset(0, -20),
+                offset: Offset(0, -45),
                 child: switchMemoryDisplayButton,
               ),
             ),

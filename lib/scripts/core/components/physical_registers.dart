@@ -9,6 +9,7 @@ class PhysicalRegisters {
   static final singleton = PhysicalRegisters._();
 
   List<PhysicalRegister> _registers = [];
+  List<PhysicalRegister> get registers => _registers;
 
   void initialize(int registerAmount) {
     for (int address = 0; address < registerAmount; address++) {

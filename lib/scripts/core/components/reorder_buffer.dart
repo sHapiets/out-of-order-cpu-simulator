@@ -8,7 +8,7 @@ class ReorderBuffer {
 
   int commitHead = 0;
   int dispatchTail = 0;
-  int get size => 5;
+  int get size => 8;
 
   bool get isFull => _buffer[dispatchTail].inUse;
 

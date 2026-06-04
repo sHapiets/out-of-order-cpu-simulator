@@ -25,24 +25,12 @@ class Configuration {
   }
 
   List<Data> instructions = [
-    Data.fromUnsignedHexString("00500093", DataType.word), // addi x1, x0, 5
-    Data.fromUnsignedHexString("00500113", DataType.word), // addi x2, x0, 5
-    // beq x1, x2, +16  (branch TAKEN)
-    Data.fromUnsignedHexString("00208663", DataType.word),
-
-    // ---------- SHOULD BE FLUSHED ----------
-    Data.fromUnsignedHexString("06300193", DataType.word), // addi x3, x0, 99
-    Data.fromUnsignedHexString("04D00213", DataType.word), // addi x4, x0, 77
-    Data.fromUnsignedHexString("03700293", DataType.word), // addi x5, x0, 55
-    Data.fromUnsignedHexString("02100313", DataType.word), // addi x6, x0, 33
-    // --------------------------------------
-
-    // branch target:
-    Data.fromUnsignedHexString("00100393", DataType.word), // addi x7, x0, 1
-    Data.wordZero(),
-    Data.wordZero(),
-    Data.wordZero(),
-    Data.wordZero(),
-    Data.wordZero(),
+    Data.fromUnsignedHexString("00A08093", DataType.word),
+    Data.fromUnsignedHexString("00A08113", DataType.word),
+    Data.fromUnsignedHexString("00A17213", DataType.word),
+    Data.fromUnsignedHexString("00A0F193", DataType.word),
+    Data.fromUnsignedHexString("00A0F193", DataType.word),
+    Data.fromUnsignedHexString("00002283", DataType.word),
+    Data.fromUnsignedHexString("0E509B23", DataType.word),
   ];
 }

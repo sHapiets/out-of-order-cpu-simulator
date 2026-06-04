@@ -14,64 +14,51 @@ class ReorderBufferWidget extends StatefulWidget {
 class ReorderBufferWidgetState extends State<ReorderBufferWidget> {
   final rob = ReorderBuffer.singleton;
 
-  final double widgetWidth = 700;
+  final double widgetWidth = 730;
   final double widgetHeight = 420;
 
-  final Size paintSize = const Size(660, 300);
+  final Size paintSize = const Size(720, 315);
 
   Widget _buildEntryCard(int index, ROBEntry entry) {
     final isHead = rob.commitHead == index;
     final isTail = rob.dispatchTail == index;
-    final isUsed = entry.inUse;
-    final isIssued = entry.issued;
-    final isCompleted = entry.completed;
 
     Color borderColor = Colors.grey.shade400;
 
-    if (isUsed && !isIssued && !isCompleted) {
-      borderColor = Colors.orange;
-    }
-
-    if (isUsed && isIssued && !isCompleted) {
-      borderColor = Colors.blue;
-    }
-
-    if (isUsed && isIssued && isCompleted) {
-      borderColor = Colors.green;
-    }
-
     Widget stateBox(String label, bool value) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        width: 20,
+        padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
         decoration: BoxDecoration(
           border: Border.all(
             color: value ? Colors.green : Colors.grey.shade400,
           ),
+          color: value ? Colors.green.withOpacity(0.2) : Colors.transparent,
           borderRadius: BorderRadius.circular(4),
         ),
         child: Text(
-          "$label:${value ? 1 : 0}",
+          label,
+          textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 11, fontFamily: "Roboto-Mono"),
         ),
       );
     }
 
-    Widget dataField(String label, String value) {
-      return RichText(
-        text: TextSpan(
-          style: const TextStyle(
-            fontFamily: "Roboto-Mono",
-            fontSize: 11,
-            color: Colors.black,
-          ),
-          children: [
-            TextSpan(
-              text: "$label:",
-              style: const TextStyle(fontWeight: FontWeight.bold),
+    Widget dataField(IconData icon, String value, Color color) {
+      return Column(
+        children: [
+          Icon(icon, color: color),
+          RichText(
+            text: TextSpan(
+              style: TextStyle(
+                fontFamily: "Roboto-Mono",
+                fontSize: 12,
+                color: color,
+              ),
+              children: [TextSpan(text: value)],
             ),
-            TextSpan(text: value),
-          ],
-        ),
+          ),
+        ],
       );
     }
 
@@ -86,45 +73,30 @@ class ReorderBufferWidgetState extends State<ReorderBufferWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
+          // HEAD / TAIL
+          SizedBox(
+            width: 58,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if (isHead) Icon(Icons.edit_note_rounded),
+
+                if (isTail) Icon(Icons.add),
+              ],
+            ),
+          ),
+          SizedBox(width: 20),
+
           // ENTRY NUMBER
           SizedBox(
-            width: 52,
+            width: 22,
             child: Text(
-              "ROB$index",
+              "$index",
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontFamily: "Nunito",
                 fontSize: 13,
               ),
-            ),
-          ),
-
-          // HEAD / TAIL
-          SizedBox(
-            width: 58,
-            child: Row(
-              children: [
-                if (isHead)
-                  const Text(
-                    "H",
-                    style: TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                if (isTail)
-                  const Padding(
-                    padding: EdgeInsets.only(left: 4),
-                    child: Text(
-                      "T",
-                      style: TextStyle(
-                        color: Colors.orange,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-              ],
             ),
           ),
 
@@ -156,22 +128,69 @@ class ReorderBufferWidgetState extends State<ReorderBufferWidget> {
               spacing: 10,
               runSpacing: 2,
               children: [
-                dataField("op", entry.instructionType.name),
-
-                dataField("p1", entry.pr1.toString()),
-
-                dataField("p2", entry.pr2.toString()),
-
                 dataField(
-                  "imm",
-                  entry.imm?.asSignedInt().toRadixString(16) ?? "0",
+                  entry.instructionType.functionalUnitType.icon,
+                  entry.instructionType.name,
+                  Theme.of(context).textTheme.bodySmall!.color!,
                 ),
 
-                dataField("rd", entry.rd.name),
+                dataField(
+                  Icons.looks_one_rounded,
+                  (entry.pr1.toString() != "-1")
+                      ? "P${entry.pr1.toString()}"
+                      : "",
+                  Theme.of(context).textTheme.bodySmall!.color!,
+                ),
 
-                dataField("prd", entry.prd.toString()),
+                dataField(
+                  Icons.looks_two_rounded,
+                  (entry.pr2.toString() != "-1")
+                      ? "P${entry.pr2.toString()}"
+                      : "--",
+                  Theme.of(context).textTheme.bodySmall!.color!,
+                ),
 
-                dataField("lprd", entry.lprd.toString()),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  width: 1,
+                  height: 24,
+                  color: Colors.grey.shade400,
+                ),
+
+                /* 
+                dataField(
+                  Icons.drag_indicator_rounded,
+                  entry.imm?.asSignedInt().toRadixString(16) ?? "0",
+                  Theme.of(context).textTheme.bodySmall!.color!,
+                ), */
+                dataField(
+                  Icons.edit_rounded,
+                  (entry.prd.toString() != "-1")
+                      ? "P${entry.prd.toString()}"
+                      : "--",
+                  Theme.of(context).textTheme.bodySmall!.color!,
+                ),
+
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  width: 1,
+                  height: 24,
+                  color: Colors.grey.shade400,
+                ),
+
+                dataField(
+                  Icons.edit_note_rounded,
+                  entry.rd.name,
+                  Theme.of(context).textTheme.bodySmall!.color!,
+                ),
+
+                dataField(
+                  Icons.delete_forever_rounded,
+                  (entry.lprd.toString() != "-1")
+                      ? "P${entry.lprd.toString()}"
+                      : "--",
+                  Theme.of(context).textTheme.bodySmall!.color!,
+                ),
               ],
             ),
           ),
@@ -195,6 +214,8 @@ class ReorderBufferWidgetState extends State<ReorderBufferWidget> {
                 size: paintSize,
                 painter: ComponentPainter(
                   componentShape: ComponentShape.reorderBuffer,
+                  borderColor: Theme.of(context).colorScheme.primary,
+                  fillColor: Theme.of(context).colorScheme.surface,
                 ),
               ),
             ),
@@ -203,7 +224,7 @@ class ReorderBufferWidgetState extends State<ReorderBufferWidget> {
               alignment: Alignment.topLeft,
               child: Transform.translate(
                 offset: const Offset(35, 20),
-                child: const Row(
+                child: Row(
                   children: [
                     Icon(Icons.reorder),
                     SizedBox(width: 6),
@@ -218,17 +239,14 @@ class ReorderBufferWidgetState extends State<ReorderBufferWidget> {
 
             Align(
               alignment: Alignment.center,
-              child: Transform.translate(
-                offset: const Offset(0, 30),
-                child: SizedBox(
-                  width: 620,
-                  height: 250,
-                  child: ListView.builder(
-                    itemCount: rob.buffer.length,
-                    itemBuilder: (context, index) {
-                      return _buildEntryCard(index, rob.buffer[index]);
-                    },
-                  ),
+              child: SizedBox(
+                width: 650,
+                height: 250,
+                child: ListView.builder(
+                  itemCount: rob.buffer.length,
+                  itemBuilder: (context, index) {
+                    return _buildEntryCard(index, rob.buffer[index]);
+                  },
                 ),
               ),
             ),

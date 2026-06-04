@@ -3,10 +3,18 @@ import 'package:out_of_order_cpu_coe197/scripts/layout/component/_painter/compon
 import 'package:out_of_order_cpu_coe197/scripts/layout/component/_painter/component_shape.dart';
 
 class ComponentPainter extends CustomPainter {
-  ComponentPainter({required this.componentShape, this.rotationRadians = 0});
+  ComponentPainter({
+    required this.componentShape,
+    this.rotationRadians = 0,
+    required this.borderColor,
+    required this.fillColor,
+  });
 
   final ComponentShape componentShape;
   final double rotationRadians;
+
+  final Color borderColor;
+  final Color fillColor;
 
   final radians45 = 45 * 3.14 / 180;
 
@@ -17,10 +25,10 @@ class ComponentPainter extends CustomPainter {
       ..color = const Color.fromARGB(50, 23, 60, 130)
       ..style = PaintingStyle.fill;
     final fillPaint = Paint()
-      ..color = const Color.fromARGB(255, 255, 255, 255)
+      ..color = fillColor
       ..style = PaintingStyle.fill;
     final edgePaint = Paint()
-      ..color = const Color.fromARGB(194, 46, 111, 128)
+      ..color = borderColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;

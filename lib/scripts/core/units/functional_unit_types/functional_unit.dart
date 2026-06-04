@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/reorder_buffer.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/configuration.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/rob_entry.dart';
@@ -47,11 +48,15 @@ class FunctionalUnit {
 }
 
 enum FunctionalUnitType {
-  arithmetic,
-  bitOperator,
-  bitShift,
-  slt,
-  memory,
-  branch,
-  jump,
+  arithmetic(icon: Icons.calculate_rounded),
+  bitOperator(icon: Icons.data_object_rounded),
+  bitShift(icon: Icons.code_rounded),
+  slt(icon: Icons.arrow_forward_ios_rounded),
+  memory(icon: Icons.memory_rounded),
+  branch(icon: Icons.call_split_rounded),
+  jump(icon: Icons.wrap_text_rounded);
+
+  const FunctionalUnitType({required this.icon});
+
+  final IconData icon;
 }
