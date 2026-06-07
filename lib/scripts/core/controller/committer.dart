@@ -14,19 +14,31 @@ class Committer {
   final architecturalRegisters = ArchitecturalRegisters.singleton;
   final physicalRegisters = PhysicalRegisters.singleton;
 
+  String _log = "";
+  String get getLog => _log;
+
+  void log(String text) {
+    _log = _log + text;
+    debugPrint(text);
+  }
+
+  void clearLog() {
+    _log = "";
+  }
+
   void commit(int commitHead) {
     final commitEntry = reorderBuffer.buffer[commitHead];
 
     if (step < latency) {
-      debugPrint(
-        "  --> # COMMITTING: Entry No. $commitHead is queued for committing!",
+      log(
+        "  --> # COMMITTING: Entry No. $commitHead is queued for committing!\n",
       );
-      debugPrint("     --> # step -- $step/$latency");
+      log("     --> # step -- $step/$latency\n");
       step = (step + 1).clamp(0, latency);
       return;
     }
 
-    debugPrint("  --> # COMMITTED: Entry no. $commitHead has committed!");
+    log("  --> # COMMITTED: Entry no. $commitHead has committed!\n");
     step = 0;
 
     commitEntry.commit();
@@ -41,7 +53,7 @@ class Committer {
     final commitHead = reorderBuffer.commitHead;
     final commitEntry = reorderBuffer.buffer[reorderBuffer.commitHead];
     if (!commitEntry.completed) {
-      debugPrint("  --> # SKIP: Entry No. $commitHead is not yet completed");
+      log("  --> # SKIP: Entry No. $commitHead is not yet completed!\n");
       return;
     }
 
@@ -50,6 +62,8 @@ class Committer {
 
   void run() {
     debugPrint(">> COMMITTER:");
+
+    clearLog();
 
     queueNextCommit();
 

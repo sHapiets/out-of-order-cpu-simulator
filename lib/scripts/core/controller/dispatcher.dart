@@ -21,16 +21,28 @@ class Dispatcher {
   final architecturalRegisters = ArchitecturalRegisters.singleton;
   final memory = Memory.singleton;
 
+  String _log = "";
+  String get getLog => _log;
+
+  void log(String text) {
+    _log = _log + text;
+    debugPrint(text);
+  }
+
+  void clearLog() {
+    _log = "";
+  }
+
   void fetch() {
     final pc = Data.word(architecturalRegisters.pc.toSigned(32));
-    debugPrint("  --> # FETCHING INSTR AT PC = ${pc.asUnsignedHexString(8)}!");
+    log("  --> # FETCHING INSTR AT PC = 0x${pc.asUnsignedHexString(3)}!\n");
     instrWord = memory.loadWord(pc);
   }
 
   void dispatch() {
     final branchUnit = BranchUnit.singleton;
     if (branchUnit.undoDispatch) {
-      debugPrint("  --> # SKIP: Dispatch blocked due to RoB flushing!");
+      log("  --> # SKIP: Dispatch blocked due to RoB flushing!\n");
       return;
     }
 
@@ -38,13 +50,13 @@ class Dispatcher {
     final RISCVInstruction instr = RISCVDecoder.instructionFromWord(instrWord);
 
     if (instr == RISCVInstruction.nop) {
-      debugPrint("  --> # END: INSTR. SET HAS TERMINATED!");
+      log("  --> # END: INSTR. SET HAS TERMINATED!\n");
       return;
     }
 
     /// ROB IS FULL
     if (reorderBuffer.isFull) {
-      debugPrint("  --> # SKIP: RoB is full!");
+      log("  --> # SKIP: RoB is full!\n");
       return;
     }
 
@@ -71,7 +83,7 @@ class Dispatcher {
 
       /// ALL PRs ARE TAKEN
       if (prd == -1) {
-        debugPrint("  --> # SKIP: Physical Registers are all taken.");
+        log("  --> # SKIP: Physical Registers are all taken.\n");
         return;
       }
 
@@ -97,11 +109,13 @@ class Dispatcher {
     );
 
     architecturalRegisters.incPC();
-    debugPrint("  --> # DISPATCHED TO ROB - Entry No. $dispatchTail!");
+    log("  --> # DISPATCHED TO ROB - Entry No. $dispatchTail!\n");
   }
 
   void run() {
     debugPrint(">> DISPATCHER: ");
+
+    clearLog();
 
     fetch();
     dispatch();

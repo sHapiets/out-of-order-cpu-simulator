@@ -16,218 +16,119 @@ class _MemoryWidgetState extends State<MemoryWidget> {
   final double widgetHeight = 320.0;
   final double widgetWidth = 240.0;
 
-  final Size paintSize = Size(200, 240);
+  final Size paintSize = const Size(200, 240);
 
-  late ListView memoryTable;
-  late List<Row> instrMemoryTableRows = [];
-  late List<Row> dynamicMemoryTableRows = [];
-
-  Widget memoryOnDisplayLabel = Text(
-    "instruction space",
-    style: TextStyle(fontSize: 14, fontFamily: "Nunito"),
-  );
-  late final Widget switchMemoryDisplayButton;
   bool instrMemoryOnDisplay = true;
 
-  @override
-  void initState() {
-    for (int i = 0; i <= memory.instrWordAddressLimit; i++) {
-      final memoryWord = memory.byteMemory[i];
+  Widget _memoryRow(int addressIndex) {
+    final memoryWord = memory.byteMemory[addressIndex];
 
-      instrMemoryTableRows.add(
-        Row(
-          spacing: 20.0,
-          children: [
-            Align(
-              alignment: AlignmentGeometry.centerRight,
-              child: Text(
-                "0x${(i * 4).toRadixString(16).padLeft(3, "0")}",
-                style: TextStyle(fontSize: 15, fontFamily: "Roboto-Mono"),
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+
+      child: Row(
+        children: [
+          SizedBox(
+            width: 55,
+
+            child: Text(
+              "0x${(addressIndex * 4).toRadixString(16).padLeft(3, "0")}",
+
+              style: const TextStyle(fontSize: 15, fontFamily: "Roboto-Mono"),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              spacing: 5.0,
+          ),
+
+          const SizedBox(width: 12),
+
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
               children: memoryWord.map((memoryByte) {
-                return Center(
-                  child: ValueListenableBuilder(
-                    valueListenable: memoryByte,
-                    builder: (context, value, child) {
-                      final text = value.asUnsignedHexString(2);
+                return Text(
+                  memoryByte.asUnsignedHexString(2),
 
-                      return AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 250),
-                        transitionBuilder: (child, animation) {
-                          final offsetAnimation =
-                              Tween<Offset>(
-                                begin: const Offset(0.25, 0),
-                                end: Offset.zero,
-                              ).animate(
-                                CurvedAnimation(
-                                  parent: animation,
-                                  curve: Curves.easeInOutBack,
-                                ),
-                              );
-
-                          return FadeTransition(
-                            opacity: animation,
-                            child: SlideTransition(
-                              position: offsetAnimation,
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: Text(
-                          text,
-                          key: ValueKey(text),
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontFamily: "Roboto-Mono",
-                          ),
-                        ),
-                      );
-                    },
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontFamily: "Roboto-Mono",
                   ),
                 );
               }).toList(),
             ),
-          ],
-        ),
-      );
-    }
-
-    for (
-      int i = memory.dynamicWordAddressBegin;
-      i <= memory.dynamicWordAddressLimit;
-      i++
-    ) {
-      final memoryWord = memory.byteMemory[i];
-
-      dynamicMemoryTableRows.add(
-        Row(
-          spacing: 20.0,
-          children: [
-            Align(
-              alignment: AlignmentGeometry.centerRight,
-              child: Text(
-                "0x${(i * 4).toRadixString(16).padLeft(3, "0")}",
-                style: TextStyle(fontSize: 15, fontFamily: "Roboto-Mono"),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              spacing: 5.0,
-              children: memoryWord.map((memoryByte) {
-                return Center(
-                  child: ValueListenableBuilder(
-                    valueListenable: memoryByte,
-                    builder: (context, value, child) {
-                      final text = value.asUnsignedHexString(2);
-
-                      return AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 250),
-                        transitionBuilder: (child, animation) {
-                          final offsetAnimation =
-                              Tween<Offset>(
-                                begin: const Offset(0.25, 0),
-                                end: Offset.zero,
-                              ).animate(
-                                CurvedAnimation(
-                                  parent: animation,
-                                  curve: Curves.easeInOutBack,
-                                ),
-                              );
-
-                          return FadeTransition(
-                            opacity: animation,
-                            child: SlideTransition(
-                              position: offsetAnimation,
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: Text(
-                          text,
-                          key: ValueKey(text),
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontFamily: "Roboto-Mono",
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-      );
-    }
-
-    memoryTable = ListView(children: instrMemoryTableRows);
-
-    switchMemoryDisplayButton = IconButton(
-      onPressed: () {
-        setState(() {
-          if (instrMemoryOnDisplay) {
-            memoryTable = ListView(children: dynamicMemoryTableRows);
-            instrMemoryOnDisplay = false;
-            memoryOnDisplayLabel = Text(
-              "dynamic space",
-              style: TextStyle(fontSize: 14, fontFamily: "Nunito"),
-            );
-          } else {
-            memoryTable = ListView(children: instrMemoryTableRows);
-            instrMemoryOnDisplay = true;
-            memoryOnDisplayLabel = Text(
-              "instruction space",
-              style: TextStyle(fontSize: 14, fontFamily: "Nunito"),
-            );
-          }
-        });
-      },
-      icon: Icon(
-        Icons.swap_horizontal_circle_sharp,
-        color: const Color.fromARGB(194, 46, 111, 128),
+          ),
+        ],
       ),
     );
-
-    super.initState();
   }
+
+  // =====================================
+  // MEMORY TABLE
+  // =====================================
+
+  Widget _memoryTable() {
+    final start = instrMemoryOnDisplay ? 0 : memory.dynamicWordAddressBegin;
+
+    final end = instrMemoryOnDisplay
+        ? memory.instrWordAddressLimit
+        : memory.dynamicWordAddressLimit;
+
+    return ListView.builder(
+      itemCount: end - start + 1,
+
+      itemBuilder: (context, index) {
+        return _memoryRow(start + index);
+      },
+    );
+  }
+
+  // =====================================
+  // BUILD
+  // =====================================
 
   @override
   Widget build(BuildContext context) {
     return FittedBox(
       fit: BoxFit.contain,
+
       child: SizedBox(
         width: widgetWidth,
         height: widgetHeight,
+
         child: Stack(
           children: [
+            // BACKGROUND
             Align(
-              alignment: AlignmentGeometry.center,
+              alignment: Alignment.center,
+
               child: CustomPaint(
                 size: paintSize,
+
                 painter: ComponentPainter(
                   componentShape: ComponentShape.memory,
+
                   borderColor: Theme.of(context).colorScheme.primary,
+
                   fillColor: Theme.of(context).colorScheme.surface,
                 ),
               ),
             ),
 
+            // TITLE
             Align(
-              alignment: AlignmentGeometry.topLeft,
+              alignment: Alignment.topLeft,
+
               child: Transform.translate(
-                offset: Offset(35, 42),
-                child: Row(
+                offset: const Offset(35, 42),
+
+                child: const Row(
                   children: [
                     Icon(Icons.memory_rounded),
+
+                    SizedBox(width: 6),
+
                     Text(
                       "memory",
+
                       style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
                     ),
                   ],
@@ -235,41 +136,71 @@ class _MemoryWidgetState extends State<MemoryWidget> {
               ),
             ),
 
+            // DIVIDER
             Align(
-              alignment: AlignmentGeometry.topCenter,
+              alignment: Alignment.topCenter,
+
               child: Transform.translate(
-                offset: Offset(0, 65),
+                offset: const Offset(0, 65),
+
                 child: SizedBox(
                   width: paintSize.width,
+
                   child: Divider(
                     thickness: 3,
-                    color: const Color.fromARGB(194, 46, 111, 128),
+
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
             ),
 
+            // MEMORY TABLE
             Align(
-              alignment: AlignmentGeometry.topCenter,
+              alignment: Alignment.topCenter,
+
               child: Transform.translate(
-                offset: Offset(0, 90),
-                child: SizedBox(height: 120, width: 160, child: memoryTable),
+                offset: const Offset(0, 90),
+
+                child: SizedBox(height: 120, width: 160, child: _memoryTable()),
               ),
             ),
 
+            // LABEL
             Align(
-              alignment: AlignmentGeometry.bottomCenter,
+              alignment: Alignment.bottomCenter,
+
               child: Transform.translate(
-                offset: Offset(0, -80),
-                child: memoryOnDisplayLabel,
+                offset: const Offset(0, -80),
+
+                child: Text(
+                  instrMemoryOnDisplay ? "instruction space" : "dynamic space",
+
+                  style: const TextStyle(fontSize: 14, fontFamily: "Nunito"),
+                ),
               ),
             ),
 
+            // SWITCH BUTTON
             Align(
-              alignment: AlignmentGeometry.bottomCenter,
+              alignment: Alignment.bottomCenter,
+
               child: Transform.translate(
-                offset: Offset(0, -45),
-                child: switchMemoryDisplayButton,
+                offset: const Offset(0, -45),
+
+                child: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      instrMemoryOnDisplay = !instrMemoryOnDisplay;
+                    });
+                  },
+
+                  icon: Icon(
+                    Icons.swap_horizontal_circle_sharp,
+
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
               ),
             ),
           ],

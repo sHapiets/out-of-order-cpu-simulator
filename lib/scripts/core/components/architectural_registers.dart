@@ -3,20 +3,30 @@ import 'package:out_of_order_cpu_coe197/scripts/core/components/physical_registe
 import 'package:out_of_order_cpu_coe197/scripts/foundation/register_address.dart';
 
 class ArchitecturalRegisters {
-  ArchitecturalRegisters._();
+  ArchitecturalRegisters._() {
+    initialize();
+  }
   static final singleton = ArchitecturalRegisters._();
 
-  final Map<RegisterAddress, int> _data =
-      {for (final register in RegisterAddress.values) register: -1}
-        ..remove(RegisterAddress.none)
-        ..update(RegisterAddress.pc, (_) => 0)
-        ..update(RegisterAddress.x0, (_) => 0);
+  Map<RegisterAddress, int> _data = {};
 
-  Map<RegisterAddress, int> renameTable =
-      {for (final register in RegisterAddress.values) register: -1}
-        ..remove(RegisterAddress.none)
-        ..remove(RegisterAddress.pc)
-        ..remove(RegisterAddress.x0);
+  Map<RegisterAddress, int> renameTable = {};
+
+  void initialize() {
+    _data = {for (final register in RegisterAddress.values) register: -1}
+      ..remove(RegisterAddress.none)
+      ..update(RegisterAddress.pc, (_) => 0)
+      ..update(RegisterAddress.x0, (_) => 0);
+
+    renameTable = {for (final register in RegisterAddress.values) register: -1}
+      ..remove(RegisterAddress.none)
+      ..remove(RegisterAddress.pc)
+      ..remove(RegisterAddress.x0);
+  }
+
+  void reset() {
+    initialize();
+  }
 
   void renameRegister(RegisterAddress regAdd, int prAdd) {
     renameTable[regAdd] = prAdd;

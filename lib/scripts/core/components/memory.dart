@@ -2,7 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:out_of_order_cpu_coe197/scripts/foundation/data.dart';
 
 class Memory {
-  Memory._();
+  Memory._() {
+    initialize();
+  }
   static final singleton = Memory._();
 
   final int instrWordAddressBegin = 0x00;
@@ -15,16 +17,24 @@ class Memory {
         wordAddress.toUnsigned(32) <= instrWordAddressLimit);
   }
 
-  final List<List<ValueNotifier<Data>>> byteMemory = List.generate(
-    0x70,
-    (_) => List.generate(4, (_) => ValueNotifier(Data.byteZero())),
-  );
+  List<List<Data>> byteMemory = [];
+
+  void initialize() {
+    byteMemory = List.generate(
+      0x70,
+      (_) => List.generate(4, (_) => (Data.byteZero())),
+    );
+  }
+
+  void reset() {
+    initialize();
+  }
 
   void _setByte(Data newByte, Data storeAddress) {
     int getMemoryWordAddress = storeAddress.asUnsignedInt() >> 2;
     int getMemoryByteAddress = storeAddress.asUnsignedInt() & 0x3;
 
-    byteMemory[getMemoryWordAddress][getMemoryByteAddress].value = newByte;
+    byteMemory[getMemoryWordAddress][getMemoryByteAddress] = newByte;
   }
 
   void storeByte(Data newByte, Data memoryAddress) {
@@ -89,7 +99,7 @@ class Memory {
       final iterMemoryAddress = Data.word(memoryAddress.asUnsignedInt() + i);
       final iterWordAddress = getMemoryWordAddress(iterMemoryAddress);
       final iterByteAddress = getMemoryByteAddress(iterMemoryAddress);
-      final byte = byteMemory[iterWordAddress][iterByteAddress].value;
+      final byte = byteMemory[iterWordAddress][iterByteAddress];
       bytes.add(byte);
     }
     newWord = Data.wordFromBytes(bytes);
@@ -110,7 +120,7 @@ class Memory {
       final iterMemoryAddress = Data.word(memoryAddress.asUnsignedInt() + i);
       final iterWordAddress = getMemoryWordAddress(iterMemoryAddress);
       final iterByteAddress = getMemoryByteAddress(iterMemoryAddress);
-      final byte = byteMemory[iterWordAddress][iterByteAddress].value;
+      final byte = byteMemory[iterWordAddress][iterByteAddress];
       bytes.add(byte);
     }
     bytes.add(Data.byteZero());
@@ -141,7 +151,7 @@ class Memory {
     final iterWordAddress = getMemoryWordAddress(memoryAddress);
     final iterByteAddress = getMemoryByteAddress(memoryAddress);
     final byte = byteMemory[iterWordAddress][iterByteAddress];
-    newByte = Data(signedInt: byte.value.signedInt, dataType: DataType.byte);
+    newByte = Data(signedInt: byte.signedInt, dataType: DataType.byte);
 
     return newByte;
   }

@@ -17,6 +17,11 @@ class PhysicalRegisters {
     }
   }
 
+  void reset() {
+    _registers = [];
+    initialize(10);
+  }
+
   bool _invalidRegisterAddress(int address) => _registers.length <= address;
 
   int ownPR(bool autoValid) {

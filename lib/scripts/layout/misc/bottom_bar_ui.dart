@@ -3,126 +3,214 @@ import 'package:out_of_order_cpu_coe197/scripts/core/controller/runtime.dart';
 
 class BottomBarUI extends StatelessWidget {
   BottomBarUI({super.key});
+
   final runtime = Runtime.singleton;
 
-  void _run() {
+  // =====================================
+  // BUTTON FUNCTIONS
+  // =====================================
+
+  void _loadInstruction() {
+    debugPrint("LOAD INSTRUCTION");
+  }
+
+  void _runCycle() {
     runtime.runCycle();
   }
 
   void _reset() {
-    debugPrint("RESET");
+    runtime.reset();
   }
+  // =====================================
+  // STEP ITEM
+  // =====================================
 
-  void _openFile() {
-    debugPrint("OPEN FILE");
-  }
-
-  void _menu() {
-    debugPrint("MENU");
-
-    // TODO:
-  }
-
-  Widget _buildButton({
+  Widget _stepItem({
     required BuildContext context,
-    required IconData icon,
+    required String step,
     required String label,
+    required String subLabel,
+    required IconData icon,
     required VoidCallback onPressed,
+    bool highlighted = false,
   }) {
-    return SizedBox(
-      width: 60,
-      height: 60,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6),
+    final colorScheme = Theme.of(context).colorScheme;
 
-        child: FilledButton(
-          onPressed: onPressed,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
 
-          style: ElevatedButton.styleFrom(
-            elevation: 0,
+      children: [
+        // STEP NUMBER
+        Container(
+          width: 22,
+          height: 22,
 
-            padding: const EdgeInsets.symmetric(vertical: 18),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
 
-            backgroundColor: Theme.of(context).colorScheme.surface,
+            color: colorScheme.primary.withValues(alpha: 0.08),
+          ),
 
-            foregroundColor: Theme.of(context).colorScheme.primary,
+          child: Center(
+            child: Text(
+              step,
 
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-
-              side: BorderSide(
-                color: Theme.of(
-                  context,
-                ).colorScheme.primary.withValues(alpha: 0.25),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+                color: colorScheme.primary,
               ),
             ),
           ),
-
-          child: Icon(icon),
-          /* 
-          label: Text(
-            label,
-
-            style: const TextStyle(
-              fontFamily: "Nunito",
-              fontWeight: FontWeight.bold,
-            ),
-          ), */
         ),
+
+        const SizedBox(width: 10),
+
+        // ICON BUTTON
+        Container(
+          width: highlighted ? 64 : 54,
+          height: highlighted ? 64 : 54,
+
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+
+            color: colorScheme.surface,
+
+            border: Border.all(color: colorScheme.outlineVariant),
+
+            boxShadow: highlighted
+                ? [
+                    BoxShadow(
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                      color: Colors.black.withValues(alpha: 0.04),
+                    ),
+                  ]
+                : [],
+          ),
+
+          child: IconButton(
+            onPressed: onPressed,
+
+            icon: Icon(icon, size: highlighted ? 34 : 26),
+
+            color: colorScheme.primary,
+          ),
+        ),
+
+        const SizedBox(width: 12),
+
+        // LABELS
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+
+          children: [
+            Text(
+              label,
+
+              style: TextStyle(
+                fontFamily: "Nunito",
+                fontWeight: FontWeight.bold,
+                fontSize: highlighted ? 15 : 13,
+                color: colorScheme.primary,
+              ),
+            ),
+
+            const SizedBox(height: 2),
+
+            Text(
+              subLabel,
+
+              style: TextStyle(
+                fontFamily: "Roboto-Mono",
+                fontSize: 11,
+                color: colorScheme.outline,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _arrow(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+
+      child: Icon(
+        Icons.arrow_forward_rounded,
+        size: 24,
+        color: Theme.of(context).colorScheme.outline,
       ),
     );
   }
 
+  // =====================================
+  // BUILD
+  // =====================================
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 70,
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+      height: 90,
+
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+
       child: Row(
-        mainAxisAlignment: .center,
+        mainAxisAlignment: MainAxisAlignment.center,
+
         children: [
-          // RUN
-          _buildButton(
+          // STEP 1
+          _stepItem(
             context: context,
 
-            icon: Icons.play_arrow_rounded,
+            step: "1",
 
-            label: "Run",
+            label: "Load Instruction",
+            subLabel: "open binary file",
 
-            onPressed: _run,
+            icon: Icons.upload_file_rounded,
+
+            onPressed: _loadInstruction,
           ),
 
-          // RESET
-          _buildButton(
+          _arrow(context),
+
+          // STEP 2
+          ValueListenableBuilder(
+            valueListenable: runtime.cycleNumber,
+
+            builder: (context, value, child) {
+              return _stepItem(
+                context: context,
+
+                step: "2",
+
+                label: "Run",
+                subLabel: "Cycle $value",
+                highlighted: true,
+                icon: Icons.play_arrow_rounded,
+
+                onPressed: _runCycle,
+              );
+            },
+          ),
+
+          _arrow(context),
+
+          // STEP 3
+          _stepItem(
             context: context,
+
+            step: "3",
+
+            label: "Reset",
+            subLabel: "clear all states",
 
             icon: Icons.restart_alt_rounded,
 
-            label: "Reset",
-
             onPressed: _reset,
-          ),
-
-          // OPEN FILE
-          _buildButton(
-            context: context,
-
-            icon: Icons.folder_open_rounded,
-
-            label: "Open File",
-
-            onPressed: _openFile,
-          ),
-
-          // MENU
-          _buildButton(
-            context: context,
-
-            icon: Icons.menu_rounded,
-
-            label: "Menu",
-
-            onPressed: _menu,
           ),
         ],
       ),

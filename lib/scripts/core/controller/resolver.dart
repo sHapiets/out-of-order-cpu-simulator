@@ -13,6 +13,18 @@ class Resolver {
   final branchUnit = BranchUnit.singleton;
   final jumpUnit = JumpUnit.singleton;
 
+  String _log = "";
+  String get getLog => _log;
+
+  void log(String text) {
+    _log = _log + text;
+    debugPrint(text);
+  }
+
+  void clearLog() {
+    _log = "";
+  }
+
   void _undoEntry(int entryNumber) {
     final physicalRegister = PhysicalRegisters.singleton;
     final architecturalRegisters = ArchitecturalRegisters.singleton;
@@ -32,9 +44,7 @@ class Resolver {
     final undoDispatch = branchUnit.undoDispatch || jumpUnit.undoDispatch;
 
     if (!undoDispatch) {
-      debugPrint(
-        "  --> # SKIP: Branch/Jump FU's have no RoB dispatch undo requests.",
-      );
+      log("  --> # SKIP: Branch/Jump FU's have no RoB dispatch undo requests.");
       return;
     }
 
@@ -80,18 +90,18 @@ class Resolver {
     if (reorderBuffer.dispatchTail == undoEndEntry) {
       reorderBuffer.incDispatchTail();
       resolveUnit(true);
-      debugPrint("  --> # END: Resuming dispatch...");
+      log("  --> # END: Resuming dispatch...");
       return;
     }
 
     _undoEntry(reorderBuffer.dispatchTail);
-    debugPrint(
-      "  --> # RESOLVING: Undo Entry No. (${reorderBuffer.dispatchTail})!",
-    );
+    log("  --> # RESOLVING: Undo Entry No. (${reorderBuffer.dispatchTail})!");
   }
 
   void run() {
     debugPrint(">> RESOLVER:");
+
+    clearLog();
 
     resolve();
 

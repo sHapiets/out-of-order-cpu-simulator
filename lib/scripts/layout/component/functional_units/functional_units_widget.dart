@@ -14,7 +14,7 @@ class FunctionalUnitsWidget extends StatefulWidget {
 class FunctionalUnitsWidgetState extends State<FunctionalUnitsWidget> {
   final functionalUnits = FunctionalUnits.singleton;
 
-  final double widgetWidth = 1000;
+  final double widgetWidth = 1150;
   final double widgetHeight = 300;
 
   void refresh() {

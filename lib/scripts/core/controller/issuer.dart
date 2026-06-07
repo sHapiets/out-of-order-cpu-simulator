@@ -12,33 +12,42 @@ class Issuer {
   final functionalUnits = FunctionalUnits.singleton;
   final physicalRegisters = PhysicalRegisters.singleton;
 
+  String _log = "";
+  String get getLog => _log;
+
+  void log(String text) {
+    _log = _log + text;
+    debugPrint(text);
+  }
+
+  void clearLog() {
+    _log = "";
+  }
+
   void _issueEntry(int entryNumber) {
     final entry = reorderBuffer.buffer[entryNumber];
 
-    debugPrint(
-      "  --> instr: ${entry.instructionType.name} | pr1: P${entry.pr1} | pr2: P${entry.pr2} | | rd: ${entry.rd.name} | lprd: P${entry.lprd} |prd: P${entry.prd} ",
-    );
     if (!entry.inUse) {
-      debugPrint("  --> # SKIP: Entry not inUse");
+      log("  --> # SKIP: Entry not in Use!\n");
       return;
     }
 
     if (entry.issued) {
-      debugPrint("  --> # SKIP: Entry already Issued");
+      log("  --> # SKIP: Entry already Issued!\n");
       return;
     }
 
     final fuType = entry.instructionType.functionalUnitType;
     final FunctionalUnit functionalUnit = functionalUnits.units[fuType]!;
     if (functionalUnit.isBusy) {
-      debugPrint("  --> # SKIP: FU-'${fuType.name}' is still BUSY");
+      log("  --> # SKIP: FU-'${fuType.name}' is still BUSY!\n");
       return;
     }
 
     if (entry.pr1 != -1) {
       final pr1Valid = physicalRegisters.readValid(entry.pr1);
       if (!pr1Valid) {
-        debugPrint("  --> # SKIP: PR1 = P${entry.pr1} is not yet ready!");
+        log("  --> # SKIP: PR1 = P${entry.pr1} is not yet ready!\n");
         return;
       }
     }
@@ -46,32 +55,36 @@ class Issuer {
     if (entry.pr2 != -1) {
       final pr2Valid = physicalRegisters.readValid(entry.pr2);
       if (!pr2Valid) {
-        debugPrint("  --> # SKIP: PR2 = P${entry.pr2} is not yet ready!");
+        log("  --> # SKIP: PR2 = P${entry.pr2} is not yet ready!\n");
         return;
       }
     }
 
     functionalUnit.issueEntry(entryNumber);
     entry.issued = true;
-    debugPrint("  --># ISSUED: Successfully issued Entry No. $entryNumber!");
+    log("  --># ISSUED: Successfully issued Entry No. $entryNumber!\n");
   }
 
   void run() {
     debugPrint(">> ISSUER:");
-    debugPrint("-> Starting at CommitHead: ${reorderBuffer.commitHead}");
+
+    clearLog();
+
+    log("-> Starting at CommitHead: ${reorderBuffer.commitHead}\n");
 
     for (
       int i = reorderBuffer.commitHead;
       i < reorderBuffer.buffer.length;
       i++
     ) {
-      debugPrint("# Entry no. $i");
+      log("# Entry no. $i\n");
       _issueEntry(i);
     }
     for (int i = 0; i < reorderBuffer.commitHead; i++) {
-      debugPrint("# Entry no. $i");
+      log("# Entry no. $i\n");
       _issueEntry(i);
     }
+
     debugPrint(">> END >>");
     debugPrint(" ");
   }

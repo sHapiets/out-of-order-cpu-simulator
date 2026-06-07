@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/architectural_registers.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/memory.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/physical_registers.dart';
+import 'package:out_of_order_cpu_coe197/scripts/core/components/reorder_buffer.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/configuration.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/controller/committer.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/controller/dispatcher.dart';
@@ -9,7 +10,7 @@ import 'package:out_of_order_cpu_coe197/scripts/core/controller/issuer.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/functional_units.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/controller/resolver.dart';
 import 'package:out_of_order_cpu_coe197/scripts/foundation/data.dart';
-import 'package:out_of_order_cpu_coe197/scripts/foundation/register_address.dart';
+import 'package:out_of_order_cpu_coe197/scripts/layout/misc/cycle_log_ui.dart';
 
 class Runtime {
   Runtime._() {
@@ -45,41 +46,27 @@ class Runtime {
     _committer.run();
     _resolver.run();
 
-    final archReg = ArchitecturalRegisters.singleton;
-    final physReg = PhysicalRegisters.singleton;
-    debugPrint(">> ARCHITECTURAL REGISTERS");
-    debugPrint("  --> DATA / PR");
-    for (final register in RegisterAddress.values) {
-      if (register == RegisterAddress.none) continue;
-
-      if (register == RegisterAddress.pc) {
-        debugPrint(
-          "    --> ${register.name} : 0x${archReg.debugGetData(register).toRadixString(16).padLeft(3, '0')}",
-        );
-        continue;
-      }
-      if (register == RegisterAddress.x0) {
-        debugPrint(
-          "    --> ${register.name} : ${archReg.debugGetData(register)}",
-        );
-        continue;
-      }
-
-      debugPrint(
-        "    --> ${register.name} : P${archReg.debugGetData(register)} = 0x${physReg.readRegister(archReg.debugGetData(register)).asUnsignedHexString(8)}",
-      );
-    }
-
-    debugPrint("  --> RENAME TABLE");
-    for (final register in archReg.renameTable.keys) {
-      debugPrint(
-        "    --> ${register.name} : P${archReg.renameTable[register]}",
-      );
-    }
-
     cycleNumber.value = cycleNumber.value + 1;
+  }
 
-    debugPrint("------------------------------");
-    debugPrint(" ");
+  void reset() {
+    final rob = ReorderBuffer.singleton;
+    final pRs = PhysicalRegisters.singleton;
+    final aRs = ArchitecturalRegisters.singleton;
+    final fUs = FunctionalUnits.singleton;
+    final mem = Memory.singleton;
+
+    rob.reset();
+    pRs.reset();
+    aRs.reset();
+    fUs.reset();
+    mem.reset();
+
+    _dispatcher.clearLog();
+    _issuer.clearLog();
+    _committer.clearLog();
+    _resolver.clearLog();
+
+    cycleNumber.value = 0;
   }
 }

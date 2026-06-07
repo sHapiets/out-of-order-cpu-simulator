@@ -12,6 +12,12 @@ class FunctionalUnit {
   int step = 0;
   bool isBusy = false;
 
+  void reset() {
+    robEntryNumber = -1;
+    step = 0;
+    isBusy = false;
+  }
+
   ROBEntry get entry {
     final reorderBuffer = ReorderBuffer.singleton;
     return reorderBuffer.buffer[robEntryNumber];

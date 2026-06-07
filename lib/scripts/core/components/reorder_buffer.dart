@@ -19,6 +19,12 @@ class ReorderBuffer {
     _buffer = List.filled(size, ROBEntry.empty);
   }
 
+  void reset() {
+    initialize();
+    commitHead = 0;
+    dispatchTail = 0;
+  }
+
   void incDispatchTail({int steps = 1}) {
     dispatchTail = (dispatchTail + steps) % size;
   }

@@ -4,6 +4,7 @@ import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types
 import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/bit_shifter_unit.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/branch_unit.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/functional_unit.dart';
+import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/jump_unit.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/memory_unit.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/functional_unit_types/slt_unit.dart';
 
@@ -18,6 +19,7 @@ class FunctionalUnits {
     FunctionalUnitType.slt: SLTUnit.singleton,
     FunctionalUnitType.memory: MemoryUnit.singleton,
     FunctionalUnitType.branch: BranchUnit.singleton,
+    FunctionalUnitType.jump: JumpUnit.singleton,
   };
 
   void run() {
@@ -40,5 +42,11 @@ class FunctionalUnits {
 
     debugPrint(">> END >>");
     debugPrint(" ");
+  }
+
+  void reset() {
+    for (final fUnit in units.values) {
+      fUnit.reset();
+    }
   }
 }

@@ -80,8 +80,8 @@ class ReorderBufferWidgetState extends State<ReorderBufferWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 if (isHead) Icon(Icons.edit_note_rounded),
-
-                if (isTail) Icon(Icons.add),
+                if (isHead && isTail) SizedBox(width: 5),
+                if (isTail) Icon(Icons.input_rounded, size: 20),
               ],
             ),
           ),
