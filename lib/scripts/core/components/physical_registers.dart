@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:out_of_order_cpu_coe197/scripts/core/configuration.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/physical_register.dart';
 import 'package:out_of_order_cpu_coe197/scripts/foundation/data.dart';
 
@@ -10,6 +11,7 @@ class PhysicalRegisters {
 
   List<PhysicalRegister> _registers = [];
   List<PhysicalRegister> get registers => _registers;
+  int get size => Configuration.singleton.physicalRegisterSize;
 
   void initialize(int registerAmount) {
     for (int address = 0; address < registerAmount; address++) {
@@ -19,7 +21,7 @@ class PhysicalRegisters {
 
   void reset() {
     _registers = [];
-    initialize(10);
+    initialize(size);
   }
 
   bool _invalidRegisterAddress(int address) => _registers.length <= address;

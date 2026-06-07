@@ -3,19 +3,14 @@ import 'package:out_of_order_cpu_coe197/scripts/core/components/architectural_re
 import 'package:out_of_order_cpu_coe197/scripts/core/components/memory.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/physical_registers.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/reorder_buffer.dart';
-import 'package:out_of_order_cpu_coe197/scripts/core/configuration.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/controller/committer.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/controller/dispatcher.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/controller/issuer.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/components/functional_units.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/controller/resolver.dart';
-import 'package:out_of_order_cpu_coe197/scripts/foundation/data.dart';
-import 'package:out_of_order_cpu_coe197/scripts/layout/misc/cycle_log_ui.dart';
 
 class Runtime {
-  Runtime._() {
-    setPresetInstructions();
-  }
+  Runtime._() {}
   static final singleton = Runtime._();
 
   ValueNotifier<int> cycleNumber = ValueNotifier(0);
@@ -24,17 +19,6 @@ class Runtime {
   final _functionUnits = FunctionalUnits.singleton;
   final _committer = Committer.singleton;
   final _resolver = Resolver.singleton;
-
-  void setPresetInstructions() {
-    final config = Configuration.singleton;
-    final memory = Memory.singleton;
-
-    for (int i = 0; i < config.instructions.length; i++) {
-      final address = Data.word((i * 4).toSigned(32));
-      final instr = config.instructions[i];
-      memory.storeInstruction(instr, address);
-    }
-  }
 
   void runCycle() {
     debugPrint("CYCLE NUMBER: $cycleNumber");

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:out_of_order_cpu_coe197/scripts/core/configuration.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/controller/runtime.dart';
+import 'package:out_of_order_cpu_coe197/scripts/layout/misc/configuration_ui.dart';
 
 class BottomBarUI extends StatelessWidget {
   BottomBarUI({super.key});
@@ -11,7 +13,7 @@ class BottomBarUI extends StatelessWidget {
   // =====================================
 
   void _loadInstruction() {
-    debugPrint("LOAD INSTRUCTION");
+    Configuration.singleton.loadInstructions();
   }
 
   void _runCycle() {
@@ -21,6 +23,12 @@ class BottomBarUI extends StatelessWidget {
   void _reset() {
     runtime.reset();
   }
+
+  void _download() {
+    // TODO:
+    // Add export / download functionality here
+  }
+
   // =====================================
   // STEP ITEM
   // =====================================
@@ -152,67 +160,111 @@ class BottomBarUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 90,
+    return FittedBox(
+      child: Container(
+        height: 90,
 
-      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 12),
 
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
 
-        children: [
-          // STEP 1
-          _stepItem(
-            context: context,
+          children: [
+            // STEP 0
+            _stepItem(
+              context: context,
 
-            step: "1",
+              step: "0",
 
-            label: "Load Instruction",
-            subLabel: "open binary file",
+              label: "Configure",
+              subLabel: "set processor parameters",
 
-            icon: Icons.upload_file_rounded,
+              icon: Icons.tune_rounded,
 
-            onPressed: _loadInstruction,
-          ),
+              onPressed: () {
+                showDialog(
+                  context: context,
 
-          _arrow(context),
+                  builder: (_) {
+                    return const ConfigurationDialog();
+                  },
+                );
+              },
+            ),
 
-          // STEP 2
-          ValueListenableBuilder(
-            valueListenable: runtime.cycleNumber,
+            _arrow(context),
 
-            builder: (context, value, child) {
-              return _stepItem(
-                context: context,
+            // STEP 1
+            _stepItem(
+              context: context,
 
-                step: "2",
+              step: "1",
 
-                label: "Run",
-                subLabel: "Cycle $value",
-                highlighted: true,
-                icon: Icons.play_arrow_rounded,
+              label: "Load Instruction",
+              subLabel: "open binary file",
 
-                onPressed: _runCycle,
-              );
-            },
-          ),
+              icon: Icons.upload_file_rounded,
 
-          _arrow(context),
+              onPressed: _loadInstruction,
+            ),
 
-          // STEP 3
-          _stepItem(
-            context: context,
+            _arrow(context),
 
-            step: "3",
+            // STEP 2
+            ValueListenableBuilder(
+              valueListenable: runtime.cycleNumber,
 
-            label: "Reset",
-            subLabel: "clear all states",
+              builder: (context, value, child) {
+                return _stepItem(
+                  context: context,
 
-            icon: Icons.restart_alt_rounded,
+                  step: "2",
 
-            onPressed: _reset,
-          ),
-        ],
+                  label: "Run",
+                  subLabel: "Cycle $value",
+
+                  highlighted: true,
+
+                  icon: Icons.play_arrow_rounded,
+
+                  onPressed: _runCycle,
+                );
+              },
+            ),
+
+            _arrow(context),
+
+            // STEP 3
+            _stepItem(
+              context: context,
+
+              step: "3",
+
+              label: "Reset",
+              subLabel: "clear all states",
+
+              icon: Icons.restart_alt_rounded,
+
+              onPressed: _reset,
+            ),
+
+            _arrow(context),
+
+            // STEP 4
+            _stepItem(
+              context: context,
+
+              step: "4",
+
+              label: "Download",
+              subLabel: "export results [SOON]",
+
+              icon: Icons.download_rounded,
+
+              onPressed: _download,
+            ),
+          ],
+        ),
       ),
     );
   }

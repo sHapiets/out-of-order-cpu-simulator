@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:out_of_order_cpu_coe197/scripts/core/configuration.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/controller/runtime.dart';
 import 'package:out_of_order_cpu_coe197/scripts/layout/component/functional_units/functional_units_widget.dart';
 import 'package:out_of_order_cpu_coe197/scripts/layout/component/memory/memory_widget.dart';
@@ -40,54 +41,59 @@ class _ProcessorWidgetState extends State<ProcessorWidget> {
             width: widgetWidth,
             height: widgetHeight,
             margin: EdgeInsets.all(0),
-            child: ValueListenableBuilder(
-              valueListenable: Runtime.singleton.cycleNumber,
-              builder: (context, value, child) {
-                return Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Transform.translate(
-                        offset: robPosition,
-                        child: ReorderBufferWidget(),
-                      ),
-                    ),
-                    Align(
-                      alignment: AlignmentGeometry.center,
-                      child: Transform.translate(
-                        offset: memoryPosition,
-                        child: MemoryWidget(),
-                      ),
-                    ),
-                    Align(
-                      alignment: AlignmentGeometry.center,
-                      child: Transform.translate(
-                        offset: aRPostion,
-                        child: ArchitecturalRegisterWidget(),
-                      ),
-                    ),
-                    Align(
-                      alignment: AlignmentGeometry.center,
-                      child: Transform.translate(
-                        offset: pRPosition,
-                        child: PhysicalRegistersWidget(),
-                      ),
-                    ),
-                    Align(
-                      alignment: AlignmentGeometry.center,
-                      child: Transform.translate(
-                        offset: rTPosition,
-                        child: RenameTableWidget(),
-                      ),
-                    ),
-                    Align(
-                      alignment: AlignmentGeometry.center,
-                      child: Transform.translate(
-                        offset: fUPosition,
-                        child: FunctionalUnitsWidget(),
-                      ),
-                    ),
-                  ],
+            child: ListenableBuilder(
+              listenable: Configuration.singleton,
+              builder: (context, child) {
+                return ValueListenableBuilder(
+                  valueListenable: Runtime.singleton.cycleNumber,
+                  builder: (context, value, child) {
+                    return Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Transform.translate(
+                            offset: robPosition,
+                            child: ReorderBufferWidget(),
+                          ),
+                        ),
+                        Align(
+                          alignment: AlignmentGeometry.center,
+                          child: Transform.translate(
+                            offset: memoryPosition,
+                            child: MemoryWidget(),
+                          ),
+                        ),
+                        Align(
+                          alignment: AlignmentGeometry.center,
+                          child: Transform.translate(
+                            offset: aRPostion,
+                            child: ArchitecturalRegisterWidget(),
+                          ),
+                        ),
+                        Align(
+                          alignment: AlignmentGeometry.center,
+                          child: Transform.translate(
+                            offset: pRPosition,
+                            child: PhysicalRegistersWidget(),
+                          ),
+                        ),
+                        Align(
+                          alignment: AlignmentGeometry.center,
+                          child: Transform.translate(
+                            offset: rTPosition,
+                            child: RenameTableWidget(),
+                          ),
+                        ),
+                        Align(
+                          alignment: AlignmentGeometry.center,
+                          child: Transform.translate(
+                            offset: fUPosition,
+                            child: FunctionalUnitsWidget(),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
             ),

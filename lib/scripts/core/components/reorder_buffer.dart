@@ -1,3 +1,4 @@
+import 'package:out_of_order_cpu_coe197/scripts/core/configuration.dart';
 import 'package:out_of_order_cpu_coe197/scripts/core/units/rob_entry.dart';
 
 class ReorderBuffer {
@@ -8,7 +9,7 @@ class ReorderBuffer {
 
   int commitHead = 0;
   int dispatchTail = 0;
-  int get size => 8;
+  int get size => Configuration.singleton.reorderBufferSize;
 
   bool get isFull => _buffer[dispatchTail].inUse;
 

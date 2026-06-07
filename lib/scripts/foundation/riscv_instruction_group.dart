@@ -1,5 +1,5 @@
 enum RISCVInstructionGroup {
-  arithemetic,
+  arithmetic,
   and,
   or,
   xor,

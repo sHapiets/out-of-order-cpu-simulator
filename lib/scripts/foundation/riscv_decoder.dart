@@ -308,7 +308,7 @@ enum RISCVInstruction {
     opCodeType: RISCVOpCodeType.E,
     immSelType: ImmSel.none,
     functionalUnitType: FunctionalUnitType.arithmetic,
-    instrGroup: RISCVInstructionGroup.arithemetic,
+    instrGroup: RISCVInstructionGroup.arithmetic,
   ),
 
   // =========================
@@ -319,14 +319,14 @@ enum RISCVInstruction {
     opCodeType: RISCVOpCodeType.R,
     immSelType: ImmSel.none,
     functionalUnitType: FunctionalUnitType.arithmetic,
-    instrGroup: RISCVInstructionGroup.arithemetic,
+    instrGroup: RISCVInstructionGroup.arithmetic,
   ),
 
   sub(
     opCodeType: RISCVOpCodeType.R,
     immSelType: ImmSel.none,
     functionalUnitType: FunctionalUnitType.arithmetic,
-    instrGroup: RISCVInstructionGroup.arithemetic,
+    instrGroup: RISCVInstructionGroup.arithmetic,
   ),
 
   and(
@@ -393,7 +393,7 @@ enum RISCVInstruction {
     opCodeType: RISCVOpCodeType.I,
     immSelType: ImmSel.immTypeI,
     functionalUnitType: FunctionalUnitType.arithmetic,
-    instrGroup: RISCVInstructionGroup.arithemetic,
+    instrGroup: RISCVInstructionGroup.arithmetic,
   ),
 
   andi(
@@ -588,14 +588,14 @@ enum RISCVInstruction {
     opCodeType: RISCVOpCodeType.U,
     immSelType: ImmSel.immTypeU,
     functionalUnitType: FunctionalUnitType.arithmetic,
-    instrGroup: RISCVInstructionGroup.arithemetic,
+    instrGroup: RISCVInstructionGroup.arithmetic,
   ),
 
   lui(
     opCodeType: RISCVOpCodeType.U,
     immSelType: ImmSel.immTypeU,
     functionalUnitType: FunctionalUnitType.arithmetic,
-    instrGroup: RISCVInstructionGroup.arithemetic,
+    instrGroup: RISCVInstructionGroup.arithmetic,
   ),
 
   // =========================
@@ -606,14 +606,14 @@ enum RISCVInstruction {
     opCodeType: RISCVOpCodeType.R,
     immSelType: ImmSel.none,
     functionalUnitType: FunctionalUnitType.arithmetic,
-    instrGroup: RISCVInstructionGroup.arithemetic,
+    instrGroup: RISCVInstructionGroup.arithmetic,
   ),
 
   cmovm(
     opCodeType: RISCVOpCodeType.R,
     immSelType: ImmSel.none,
     functionalUnitType: FunctionalUnitType.arithmetic,
-    instrGroup: RISCVInstructionGroup.arithemetic,
+    instrGroup: RISCVInstructionGroup.arithmetic,
   ),
 
   delm(
