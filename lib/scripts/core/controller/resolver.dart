@@ -85,6 +85,9 @@ class Resolver {
       }
     }
 
+    final architecturalRegisters = ArchitecturalRegisters.singleton;
+    architecturalRegisters.offsetPC(-4);
+
     reorderBuffer.decDispatchTail();
 
     if (reorderBuffer.dispatchTail == undoEndEntry) {

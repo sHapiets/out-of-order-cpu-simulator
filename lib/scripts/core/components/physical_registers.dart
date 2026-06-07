@@ -5,7 +5,7 @@ import 'package:out_of_order_cpu_coe197/scripts/foundation/data.dart';
 
 class PhysicalRegisters {
   PhysicalRegisters._() {
-    initialize(10);
+    initialize();
   }
   static final singleton = PhysicalRegisters._();
 
@@ -13,15 +13,15 @@ class PhysicalRegisters {
   List<PhysicalRegister> get registers => _registers;
   int get size => Configuration.singleton.physicalRegisterSize;
 
-  void initialize(int registerAmount) {
-    for (int address = 0; address < registerAmount; address++) {
+  void initialize() {
+    for (int address = 0; address < size; address++) {
       _registers.add(PhysicalRegister.newRegister(address));
     }
   }
 
   void reset() {
     _registers = [];
-    initialize(size);
+    initialize();
   }
 
   bool _invalidRegisterAddress(int address) => _registers.length <= address;

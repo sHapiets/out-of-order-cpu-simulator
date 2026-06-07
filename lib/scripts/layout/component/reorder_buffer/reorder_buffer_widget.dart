@@ -27,7 +27,7 @@ class ReorderBufferWidgetState extends State<ReorderBufferWidget> {
 
     Widget stateBox(String label, bool value) {
       return Container(
-        width: 20,
+        width: 30,
         padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
         decoration: BoxDecoration(
           border: Border.all(
@@ -37,7 +37,7 @@ class ReorderBufferWidgetState extends State<ReorderBufferWidget> {
           borderRadius: BorderRadius.circular(4),
         ),
         child: Text(
-          label,
+          "$label:${value ? '1' : '0'}",
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 11, fontFamily: "Roboto-Mono"),
         ),

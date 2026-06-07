@@ -10,20 +10,20 @@ class Configuration extends ChangeNotifier {
   static final singleton = Configuration._();
 
   Map<RISCVInstructionGroup, int> latency = {
-    RISCVInstructionGroup.arithmetic: 5,
-    RISCVInstructionGroup.and: 3,
-    RISCVInstructionGroup.or: 3,
-    RISCVInstructionGroup.xor: 3,
+    RISCVInstructionGroup.arithmetic: 3,
+    RISCVInstructionGroup.and: 2,
+    RISCVInstructionGroup.or: 2,
+    RISCVInstructionGroup.xor: 2,
     RISCVInstructionGroup.shift: 1,
     RISCVInstructionGroup.slt: 2,
-    RISCVInstructionGroup.load: 4,
-    RISCVInstructionGroup.store: 6,
+    RISCVInstructionGroup.load: 7,
+    RISCVInstructionGroup.store: 10,
     RISCVInstructionGroup.branch: 3,
     RISCVInstructionGroup.jump: 2,
   };
 
-  int physicalRegisterSize = 8;
-  int reorderBufferSize = 10;
+  int physicalRegisterSize = 64;
+  int reorderBufferSize = 8;
 
   int getLatency(RISCVInstructionGroup instrGroup) => latency[instrGroup]!;
 
